@@ -1,10 +1,10 @@
-package com.dailycodebuffer.ProductService;
+package com.dailycodeBuffer.orderSrvc;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 //@SpringBootTest
-class ProductServiceApplicationTests {
+class OrderSrvcApplicationTests {
 
 //	@Test
 	void contextLoads() {

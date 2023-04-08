@@ -1,12 +1,12 @@
-package com.dailycodebuffer.ProductService;
+package com.dailycodeBuffer.ConfigServer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-//@SpringBootTest
-class ProductServiceApplicationTests {
+@SpringBootTest
+class ConfigServerApplicationTests {
 
-//	@Test
+	@Test
 	void contextLoads() {
 	}
 

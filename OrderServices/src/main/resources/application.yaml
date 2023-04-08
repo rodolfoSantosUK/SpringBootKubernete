@@ -1,0 +1,24 @@
+server:
+  port: 9092
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:3309/orderDb?useTimezone=true&serverTimezone=UTC
+    username: root
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: false
+
+  application:
+    name: ORDER-SERVICE
+
+
+# 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
+
+#  docker run -p 3309:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:8.0.29
