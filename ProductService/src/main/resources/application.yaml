@@ -31,5 +31,6 @@ spring:
 #      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}
 
 # 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
+# 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
 
 #  docker run -p 3309:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:8.0.29
