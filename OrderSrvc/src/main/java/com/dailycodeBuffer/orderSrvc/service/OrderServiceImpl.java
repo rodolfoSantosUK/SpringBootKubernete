@@ -1,6 +1,7 @@
 package com.dailycodeBuffer.orderSrvc.service;
 
 import com.dailycodeBuffer.orderSrvc.entity.Order;
+import com.dailycodeBuffer.orderSrvc.external.client.ProductService;
 import com.dailycodeBuffer.orderSrvc.model.OrderRequest;
 import com.dailycodeBuffer.orderSrvc.repository.OrderRepository;
 import lombok.AllArgsConstructor;
@@ -13,8 +14,13 @@ import java.time.Instant;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+
+    private final ProductService productService ;
     @Override
     public long placeOrder(OrderRequest orderRequest) {
+
+        productService.reduceQuantity(orderRequest.getProductId(),
+                orderRequest.getQuantity());
 
        Order order =  Order.builder()
                       .amount(orderRequest.getTotalAmount())

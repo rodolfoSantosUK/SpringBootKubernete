@@ -10,7 +10,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-
     @ExceptionHandler(ProductServiceCustomException.class)
     public ResponseEntity<ErrorResponse> handleProductServiceException(ProductServiceCustomException exception) {
 
@@ -21,5 +20,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     }
 
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException exception) {
+
+        return new ResponseEntity<>(new ErrorResponse().builder()
+                .errorMessage(exception.getMessage())
+                .errorCode(exception.getErrorCode())
+                .build(),
+                HttpStatus.valueOf(exception.getStatus()));
+    }
 
 }

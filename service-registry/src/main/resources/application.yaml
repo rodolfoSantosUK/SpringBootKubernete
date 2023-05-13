@@ -2,16 +2,13 @@ server:
   port: 8761
 
 eureka:
- instance:
-   hostname: localhost
-
- client:
-   register-with-eureka: false # Quando definido como "false", significa que a inst�ncia do
-   # aplicativo n�o deve se registrar automaticamente no servidor
-   # Eureka ao ser iniciada. Isso � �til em casos em que o aplicativo
-   # n�o deve ser descoberto por outros servi�os ou quando n�o h� um servidor Eureka dispon�vel.
-   fetch-registry: false # Quando definido como "false", significa que a inst�ncia do aplicativo
-     # n�o buscar� automaticamente a lista de inst�ncias de outros aplicativos registrados no servidor Eureka.
+  client:
+    register-with-eureka: false # Quando definido como "false", significa que a inst�ncia do
+    # aplicativo n�o deve se registrar automaticamente no servidor
+    # Eureka ao ser iniciada. Isso � �til em casos em que o aplicativo
+    # n�o deve ser descoberto por outros servi�os ou quando n�o h� um servidor Eureka dispon�vel.
+    fetch-registry: false # Quando definido como "false", significa que a inst�ncia do aplicativo
+    # n�o buscar� automaticamente a lista de inst�ncias de outros aplicativos registrados no servidor Eureka.
 
 
 
