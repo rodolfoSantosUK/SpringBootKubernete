@@ -34,3 +34,4 @@ spring:
 # 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
 
 #  docker run -p 3309:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:8.0.29
+#  docker run -d -p 9411:9411 openzipkin/zipkin
