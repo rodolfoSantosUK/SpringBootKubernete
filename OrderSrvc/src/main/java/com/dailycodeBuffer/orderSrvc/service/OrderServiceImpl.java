@@ -5,6 +5,7 @@ import com.dailycodeBuffer.orderSrvc.external.client.PaymentService;
 import com.dailycodeBuffer.orderSrvc.external.client.ProductService;
 import com.dailycodeBuffer.orderSrvc.external.request.PaymentRequest;
 import com.dailycodeBuffer.orderSrvc.model.OrderRequest;
+import com.dailycodeBuffer.orderSrvc.model.OrderResponse;
 import com.dailycodeBuffer.orderSrvc.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -66,5 +67,10 @@ public class OrderServiceImpl implements OrderService {
 
         return order.getId();
 
+    }
+
+    @Override
+    public OrderResponse getOrderDetails(long orderId) {
+        return null;
     }
 }

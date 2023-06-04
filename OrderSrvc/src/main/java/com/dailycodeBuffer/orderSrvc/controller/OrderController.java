@@ -1,6 +1,7 @@
 package com.dailycodeBuffer.orderSrvc.controller;
 
 import com.dailycodeBuffer.orderSrvc.model.OrderRequest;
+import com.dailycodeBuffer.orderSrvc.model.OrderResponse;
 import com.dailycodeBuffer.orderSrvc.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,15 @@ public class OrderController {
     public ResponseEntity<Long> placeOrder(@RequestBody OrderRequest orderRequest) {
         long orderId = orderService.placeOrder(orderRequest);
         return new ResponseEntity<>(orderId, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderDetails(@PathVariable long orderId) {
+        OrderResponse orderResponse
+                = orderService.getOrderDetails(orderId);
+
+        return new ResponseEntity<>(orderResponse,
+                HttpStatus.OK);
     }
 
 }
