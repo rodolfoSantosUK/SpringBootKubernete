@@ -3,7 +3,7 @@ package com.dailycodeBuffer.orderSrvc.controller;
 import com.dailycodeBuffer.orderSrvc.model.OrderRequest;
 import com.dailycodeBuffer.orderSrvc.model.OrderResponse;
 import com.dailycodeBuffer.orderSrvc.service.OrderService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/order")
-@AllArgsConstructor
 public class OrderController {
 
-    private final OrderService orderService ;
+    @Autowired
+    private OrderService orderService;
 
     @PostMapping("/placeOrder")
     public ResponseEntity<Long> placeOrder(@RequestBody OrderRequest orderRequest) {
         long orderId = orderService.placeOrder(orderRequest);
-        return new ResponseEntity<>(orderId, HttpStatus.CREATED);
+        return new ResponseEntity<>(orderId, HttpStatus.OK);
     }
 
     @GetMapping("/{orderId}")
@@ -31,5 +31,4 @@ public class OrderController {
         return new ResponseEntity<>(orderResponse,
                 HttpStatus.OK);
     }
-
 }

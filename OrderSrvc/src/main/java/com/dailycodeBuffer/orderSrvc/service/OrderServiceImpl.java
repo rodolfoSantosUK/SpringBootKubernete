@@ -1,35 +1,51 @@
 package com.dailycodeBuffer.orderSrvc.service;
 
 import com.dailycodeBuffer.orderSrvc.entity.Order;
+import com.dailycodeBuffer.orderSrvc.exception.CustomException;
 import com.dailycodeBuffer.orderSrvc.external.client.PaymentService;
 import com.dailycodeBuffer.orderSrvc.external.client.ProductService;
 import com.dailycodeBuffer.orderSrvc.external.request.PaymentRequest;
+import com.dailycodeBuffer.orderSrvc.external.response.PaymentResponse;
 import com.dailycodeBuffer.orderSrvc.model.OrderRequest;
 import com.dailycodeBuffer.orderSrvc.model.OrderResponse;
+import com.dailycodeBuffer.orderSrvc.model.ProductResponse;
 import com.dailycodeBuffer.orderSrvc.repository.OrderRepository;
-import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 
+
 @Service
-@AllArgsConstructor
 @Log4j2
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements OrderService{
 
-    private final OrderRepository orderRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    private final PaymentService paymentService;
+    @Autowired
+    private ProductService productService;
 
-    private final ProductService productService;
+    @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public long placeOrder(OrderRequest orderRequest) {
 
-        productService.reduceQuantity(orderRequest.getProductId(),
-                orderRequest.getQuantity());
+        //Order Entity -> Save the data with Status Order Created
+        //Product Service - Block Products (Reduce the Quantity)
+        //Payment Service -> Payments -> Success-> COMPLETE, Else
+        //CANCELLED
 
+        log.info("Placing Order Request: {}", orderRequest);
+
+        productService.reduceQuantity(orderRequest.getProductId(), orderRequest.getQuantity());
+
+        log.info("Creating Order with Status CREATED");
         Order order = Order.builder()
                 .amount(orderRequest.getTotalAmount())
                 .orderStatus("CREATED")
@@ -41,14 +57,12 @@ public class OrderServiceImpl implements OrderService {
         order = orderRepository.save(order);
 
         log.info("Calling Payment Service to complete the payment");
-
         PaymentRequest paymentRequest
                 = PaymentRequest.builder()
                 .orderId(order.getId())
                 .paymentMode(orderRequest.getPaymentMode())
                 .amount(orderRequest.getTotalAmount())
                 .build();
-
 
         String orderStatus = null;
         try {
@@ -64,13 +78,58 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         log.info("Order Places successfully with Order Id: {}", order.getId());
-
         return order.getId();
-
     }
 
     @Override
     public OrderResponse getOrderDetails(long orderId) {
-        return null;
+        log.info("Get order details for Order Id : {}", orderId);
+
+        Order order
+                = orderRepository.findById(orderId).orElseThrow(() -> new CustomException("Order not found for the order Id:" + orderId,
+                        "NOT_FOUND",
+                        404));
+
+        log.info("Invoking Product service to fetch the product for id: {}", order.getProductId());
+        ProductResponse productResponse
+                = restTemplate.getForObject(
+                "http://PRODUCT-SERVICE/product/" + order.getProductId(),
+                ProductResponse.class
+        );
+
+        log.info("Getting payment information form the payment Service");
+        PaymentResponse paymentResponse
+                = restTemplate.getForObject(
+                "http://PAYMENT-SERVICE/payment/order/" + order.getId(),
+                PaymentResponse.class
+        );
+
+        OrderResponse.ProductDetails productDetails
+                = OrderResponse.ProductDetails
+                .builder()
+                .productName(productResponse.getProductName())
+                .productId(productResponse.getProductId())
+                .build();
+
+        OrderResponse.PaymentDetails paymentDetails
+                = OrderResponse.PaymentDetails
+                .builder()
+                .paymentId(paymentResponse.getPaymentId())
+                .paymentStatus(paymentResponse.getStatus())
+                .paymentDate(paymentResponse.getPaymentDate())
+                .paymentMode(paymentResponse.getPaymentMode())
+                .build();
+
+        OrderResponse orderResponse
+                = OrderResponse.builder()
+                .orderId(order.getId())
+                .orderStatus(order.getOrderStatus())
+                .amount(order.getAmount())
+                .orderDate(order.getOrderDate())
+                .productDetails(productDetails)
+                .paymentDetails(paymentDetails)
+                .build();
+
+        return orderResponse;
     }
 }
